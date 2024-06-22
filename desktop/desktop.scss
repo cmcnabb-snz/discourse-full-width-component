@@ -4,14 +4,14 @@ $sidebar-width: #{$sidebar_width}em;
   max-width: unset; // undoing core default
 }
 
-.d-header #site-logo {
-  // constraining the logo to fit its container
-  // this prevents the logo from shifting header content
-  // when the sidebar is opened
-  max-height: 100%;
-  max-width: 100%;
-  object-fit: contain; // contains logo without squishing/stretching
-}
+// .d-header #site-logo {
+//   // constraining the logo to fit its container
+//   // this prevents the logo from shifting header content
+//   // when the sidebar is opened
+//   max-height: 100%;
+//   max-width: 100%;
+//   object-fit: contain; // contains logo without squishing/stretching
+// }
 
 #main-outlet-wrapper {
   display: flex;
