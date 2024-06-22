@@ -5,7 +5,7 @@ $sidebar-width: #{$sidebar_width}em;
 }
 
 .d-header #site-logo {
-  // constraining the logo to fit its grid container
+  // constraining the logo to fit its container
   // this prevents the logo from shifting header content
   // when the sidebar is opened
   max-height: 100%;
@@ -14,21 +14,10 @@ $sidebar-width: #{$sidebar_width}em;
 }
 
 #main-outlet-wrapper {
-  grid-template-columns: 1fr minmax(0, var(--d-max-width)) 1fr;
-  gap: 2em;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   padding: 0;
-
-  body.has-sidebar-page & {
-    grid-template-columns: 1fr minmax(0, var(--d-max-width)) 1fr; // overriding core
-    .sidebar-wrapper {
-      width: var(--d-sidebar-width);
-    }
-  }
-
-  body.has-full-page-chat & {
-    grid-template-columns: min-content;
-    gap: 0;
-  }
 
   .sidebar-wrapper {
     width: 100%; // safari has issues without this
@@ -42,6 +31,17 @@ $sidebar-width: #{$sidebar_width}em;
     body.has-full-page-chat & {
       max-width: unset;
     }
+  }
+
+  body.has-sidebar-page & {
+    .sidebar-wrapper {
+      width: var(--d-sidebar-width);
+    }
+  }
+
+  body.has-full-page-chat & {
+    flex: 1;
+    gap: 0;
   }
 }
 
@@ -64,90 +64,114 @@ $sidebar-width: #{$sidebar_width}em;
   overflow: visible;
 }
 
-// .d-header {
-//   > .wrap {
-//     .contents {
-//       display: grid;
-//       grid-template-areas: "logo lspace extra-info rspace panel";
-//       grid-template-columns:
-//         minmax(auto, 1fr)
-//         auto
-//         minmax(0, calc(var(--d-max-width)))
-//         auto
-//         minmax(auto, 1fr);
+.d-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  z-index: z("header");
+  background-color: var(--header_background);
+  box-shadow: var(--shadow-header);
+  backface-visibility: hidden; /** do magic for scrolling performance **/
 
-//       .d-header-mode {
-//         grid-area: extra-info;
-//         white-space: nowrap;
-//         @include breakpoint("tablet") {
-//           display: none;
-//         }
-//       }
+  > .wrap {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
 
-//       .d-header .title {
-//         min-width: auto;
-//       }
+    .contents {
+      display: flex;
+      align-items: center;
+      height: 100%;
+      width: 100%;
 
-//       .has-sidebar-page & {
-//         // at wide widths, when 1fr > 0
-//         // we want the panel to be the same width as the sidebar
-//         // this way we can get more accurate centering
-//         grid-template-columns:
-//           calc(var(--d-sidebar-width) - 11px) // 11px is wrap padding
-//           1fr
-//           minmax(0, calc(var(--d-max-width)))
-//           1fr
-//           minmax(0, calc(var(--d-sidebar-width) - 11px));
+      .header-row {
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
 
-//         // at narrower widths, when 1fr = 0
-//         // we can center without mataching the sidebar's width
-//         // which allows the title to take up the remaining width
-//         @media screen and (max-width: 1400px) {
-//           grid-template-columns:
-//             calc(var(--d-sidebar-width) - 11px)
-//             1fr
-//             minmax(0, calc(var(--d-max-width)))
-//             1fr
-//             auto;
-//         }
-//         gap: 1em;
-//         @media screen and (max-width: 1000px) {
-//           gap: 0.5em;
-//         }
-//         .d-header-mode {
-//           grid-area: extra-info;
-//         }
-//       }
-//     }
-//   }
-//   .header-sidebar-toggle {
-//     grid-area: logo;
-//   }
-//   .before-header-panel-outlet {
-//     grid-area: extra-info;
-//   }
-//   .d-header-mode {
-//     .bootstrap-mode {
-//       margin: 0;
-//     }
-//   }
-//   .home-logo-wrapper-outlet {
-//     grid-area: logo;
-//     margin-left: 3.7em; // 2.7em hamburger width + 1em for margin
-//     margin-right: 0.725em;
-//     display: flex;
-//     overflow: visible;
-//     .title {
-//       flex: 1 0 auto;
-//     }
-//   }
-//   .panel {
-//     grid-area: panel;
-//   }
-// }
+        .logo-wrapper {
+          display: flex;
+          align-items: center;
+        }
+
+        .auth-buttons {
+          display: flex;
+          align-items: center;
+          margin-top: 0.4em;
+
+          .login-button,
+          .signup-button {
+            padding: 8px 14px;
+          }
+        }
+      }
+
+      .d-header-mode {
+        display: flex;
+        align-items: center;
+        white-space: nowrap;
+        @include breakpoint("tablet") {
+          display: none;
+        }
+      }
+    }
+
+    .title {
+      --d-logo-height: 2.667em;
+      display: flex;
+      align-items: center;
+      height: 100%;
+      animation: fadein 0.5s;
+      // min-width acts as a placeholder if the small logo takes a while to load
+      // it prevents topic title from shifting after the small logo loads
+      // it's set to match the #site-logo height so square small logos don't resize when titles dock
+      min-width: var(--d-logo-height);
+
+      a,
+      a:visited {
+        color: var(--header_primary);
+      }
+
+      &:not(.title--minimized) {
+        // allows large logos to be hidden if there are too many other header elements
+        // this prioritizes nav elements, especially in cases of high zoom levels
+        overflow: hidden;
+      }
+    }
+
+    .home-logo-wrapper-outlet {
+      display: flex;
+      align-items: center;
+      margin-left: 3.7em; // 2.7em hamburger width + 1em for margin
+      margin-right: 0.725em;
+
+      .title {
+        flex: 1 0 auto;
+      }
+    }
+
+    .header-sidebar-toggle {
+      display: flex;
+      align-items: center;
+    }
+
+    .before-header-panel-outlet {
+      display: flex;
+      align-items: center;
+    }
+  }
+
+  .panel {
+    display: flex;
+    align-items: center;
+  }
+}
 
 .extra-info-wrapper {
-  grid-area: extra-info;
   max-width: var(--d-max-width);
   width: 100%;
   box-sizing: border-box;
