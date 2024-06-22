@@ -157,7 +157,7 @@ $sidebar-width: #{$sidebar_width}em;
     .header-sidebar-toggle {
       display: flex;
       align-items: center;
-      max-width: fit-content;
+      max-width: 50px;
     }
 
     .before-header-panel-outlet {
